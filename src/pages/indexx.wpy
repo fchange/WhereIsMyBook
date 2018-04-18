@@ -1,0 +1,28 @@
+<style lang="less">
+
+</style>
+<template>
+  
+</template>
+
+<script>
+
+  export default class Index extends wepy.page {
+    config = {
+      navigationBarTitleText: '我的书呢🤔'
+    }
+
+    data = {
+      mynum: 20
+    }
+
+    methods = {
+    }
+
+    events = {
+    }
+
+    onLoad() {
+    }
+  }
+</script>
