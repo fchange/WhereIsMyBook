@@ -1,4 +1,5 @@
 <style lang="less">
+@import "./style/weui.less";
 .container {
   height: 100%;
   display: flex;
@@ -11,13 +12,17 @@
 
 <script>
 import wepy from 'wepy'
-import Promise from 'promise-polyfill'
 import 'wepy-async-function'
 
 export default class extends wepy.app {
   config = {
     pages: [
-      'pages/indexx'
+      'pages/Rooms',
+      'pages/CreateRoom',
+      'pages/SearchRoom',
+      'pages/RoomDetail',
+      'pages/Room',
+      'pages/SearchBook'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -28,17 +33,23 @@ export default class extends wepy.app {
   }
 
   globalData = {
-    userInfo: null
+    userInfo: null,
+    APP_ID: 'Xq590guTvJr5nnSg8BwD4mnS-gzGzoHsz',
+    APP_KEY: 'JSj6886BVNuyRMBxm4bnYfas',
+    AV: null
   }
 
   constructor () {
     super()
     this.use('requestfix')
-    this.use('promisify')
   }
 
   onLaunch() {
-    this.testAsync()
+    this.globalData.AV = require('leancloud-storage')
+    this.globalData.AV.init({
+      appId: this.globalData.APP_ID,
+      appKey: this.globalData.APP_KEY
+    })
   }
 
   sleep (s) {
@@ -62,6 +73,7 @@ export default class extends wepy.app {
     wepy.getUserInfo({
       success (res) {
         that.globalData.userInfo = res.userInfo
+        console.log(res.signature)
         cb && cb(res.userInfo)
       }
     })

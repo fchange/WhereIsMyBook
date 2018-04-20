@@ -1,5 +1,5 @@
 {
-  "description": "where is my book?",
+  "description": "find book",
   "setting": {
     "urlCheck": true,
     "es6": false,
@@ -8,6 +8,6 @@
   },
   "compileType": "miniprogram",
   "appid": "wxb2539ea4ae6b9fc8",
-  "projectname": "mybook",
+  "projectname": "whereismybook",
   "miniprogramRoot": "./dist"
 }

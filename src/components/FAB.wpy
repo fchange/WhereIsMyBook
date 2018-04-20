@@ -1,0 +1,63 @@
+<style lang="less">
+@import '../style/FAB.less';
+</style>
+
+<template>
+  <view class="wux-backdrop--transparent" wx:if="{{ opened }}"></view>
+  <view class="wux-speed-dial {{ className }} {{ opened ? 'wux-speed-dial--opened' : '' }}" @tap="toggle">
+    <view class="wux-speed-dial__action" hover-class="wux-speed-dial__action--hover">
+      <text class="wux-speed-dial__text"></text>
+    </view>
+    <view class="wux-speed-dial__buttons" wx:if="{{ opts.buttons.length }}">
+      <block wx:for="{{ opts.buttons }}" wx:key="">
+        <view class="wux-speed-dial__button" data-index="{{ index }}" data-label="{{ item.label }}" @tap="buttonClicked" hover-class="wux-speed-dial__button--hover">
+          <image class="wux-speed-dial__icon" src="{{ item.icon }}" />
+        </view>
+      </block>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class Group extends wepy.component {
+    props = {
+      opts: {}
+    }
+    customData = {
+      positionCss: {
+        'topLeft': `wux-speed-dial--top-left`,
+        'topRight': `wux-speed-dial--top-right`,
+        'bottomLeft': `wux-speed-dial--bottom-left`,
+        'bottomRight': `wux-speed-dial--bottom-right`
+      }
+    }
+    data = {
+      className: `wux-speed-dial--bottom-left`,
+      opened: false,
+      animateCss: undefined,
+      visible: true
+    }
+    methods = {
+      buttonClicked (e) {
+        const index = e.currentTarget.dataset.index
+        if (this.opts.buttonClicked && this.opts.buttonClicked(index, this.opts.buttons[index])) {
+          this.opened = !this.opened
+          this.$apply()
+        }
+      },
+      toggle () {
+        this.opened = !this.opened
+        if (this.opts.callback && typeof this.opts.callback === `function`) {
+          this.opts.callback(this, this.opened)
+        }
+      }
+    }
+    onLoad () {
+      if (this.opts && this.opts.position) {
+        this.className = this.customData.positionCss[this.opts.position]
+      }
+    }
+  }
+</script>

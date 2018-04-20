@@ -1,27 +1,22 @@
 <style lang="less">
-
 </style>
 <template>
   
 </template>
 
 <script>
-
-  export default class Index extends wepy.page {
+  import wepy from 'wepy'
+  
+  export default class SearchBook extends wepy.page {
     config = {
-      navigationBarTitleText: '我的书呢🤔'
+      navigationBarTitleText: '书呢？'
     }
-
     data = {
-      mynum: 20
     }
-
     methods = {
     }
-
     events = {
     }
-
     onLoad() {
     }
   }

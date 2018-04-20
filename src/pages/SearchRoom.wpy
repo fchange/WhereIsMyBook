@@ -1,0 +1,23 @@
+<style lang="less">
+</style>
+<template>
+  
+</template>
+
+<script>
+  import wepy from 'wepy'
+  
+  export default class SearchRoom extends wepy.page {
+    config = {
+      navigationBarTitleText: '加入房间'
+    }
+    data = {
+    }
+    methods = {
+    }
+    events = {
+    }
+    onLoad() {
+    }
+  }
+</script>

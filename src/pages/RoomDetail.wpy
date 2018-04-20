@@ -1,0 +1,24 @@
+<style lang="less">
+</style>
+<template>
+  
+</template>
+
+<script>
+  import wepy from 'wepy'
+  
+  export default class RoomDetail extends wepy.page {
+    config = {
+      navigationBarTitleText: '房间详情'
+    }
+    data = {
+    }
+    methods = {
+    }
+    events = {
+    }
+    onLoad(option) {
+      console.log(option)
+    }
+  }
+</script>

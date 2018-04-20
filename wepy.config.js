@@ -6,18 +6,12 @@ module.exports = {
   eslint: true,
   cliLogs: !prod,
   build: {
-    web: {
-      htmlTemplate: path.join('src', 'index.template.html'),
-      htmlOutput: path.join('web', 'index.html'),
-      jsOutput: path.join('web', 'index.js')
-    }
   },
   resolve: {
     alias: {
       counter: path.join(__dirname, 'src/components/counter'),
       '@': path.join(__dirname, 'src')
     },
-    aliasFields: ['wepy'],
     modules: ['node_modules']
   },
   compilers: {

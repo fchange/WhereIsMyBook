@@ -221,6 +221,7 @@
       let self = this
       this.$parent.getUserInfo(function (userInfo) {
         if (userInfo) {
+          console.log(userInfo)
           self.userInfo = userInfo
         }
         self.normalTitle = '标题已被修改'
