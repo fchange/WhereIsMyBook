@@ -1,18 +1,21 @@
 <style lang="less">
+@import "../style/card.less";
   .userinfo {
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
+    .userinfo-avatar {
+      width: 80rpx;
+      height: 80rpx;
+      border-radius: 50%;
+    }
 
-  .userinfo-avatar {
-    width: 80rpx;
-    height: 80rpx;
-    border-radius: 50%;
+    .userinfo-nickname {
+      color: #aaa;
+    }
   }
-
-  .userinfo-nickname {
-    color: #aaa;
+  .link {
+    color: #039be5;
   }
 </style>
 <template>
@@ -22,6 +25,23 @@
       <view class="userinfo-nickname">{{ userInfo.nickName }}</view>
     </view>
   </view>
+
+  <view class="card-panel">
+    <block wx:for="{{rooms}}" wx:key="index">
+      <view class="card small" id="index" @longpress="removeRoom">
+        <view class="card-image waves-effect waves-block waves-light">
+          <image class="activator" src="{{item.images[0]}}" mode="aspectFill" />
+        </view>
+        <view class="card-content">
+          <span class="card-title activator grey-text text-darken-4">
+            {{item.name}}
+          </span>
+          <view @tap="getIn" id="{{item.objectId}}" class="link">点击进入</view>
+        </view>
+      </view>
+    </block>
+  </view>
+
   <fab :opts="fabopts"></fab>
 </template>
 
@@ -47,15 +67,15 @@
         buttons: [
           {
             label: '关于',
-            icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAOGSURBVGje7VhLSFVRFF1HLROtLHtmhVJmz0c/NUstoQ84KAuSauKkdJDQh2pghRAFkTQwiKIoMppFk0ALKioKggbmQEJCsAQjKIMc9Ochymqg73Pf3ed+n4PgreG+e6+1zn7nnbvPBVJI4X8Dq3iOA5Twhq1cPZ3S63mPTnCNoeSL1/OnI/EIBrgpeeKVHHElHkEPV/gXz+QVT+IRnKLyIx/kuC/5yR+jwKt8nW/xCMq8yO9NmjxJ1rqV351UeZKsciNfk3R5kiyWtIQ9ygKMeNw21pjAHPU3MZhmkk/Do4TQHzz3IBfGg4RIOq47af9BU+uOAADX8q7jZrdzEQAIFXV28vkCXWn0aYB34uIf+ZJd7OYrfomLXmRWNH+nwDbL2kCnUJJjyNjIowyKtRU8zVWGSLHAdsJKvlBs6EwPO0Dfz4QFGTdhq8gzw6sByO1u1PnN1mypIDxCe5jHLTu+A1s1PPs8d6BFE18p+32i8ZvvuQMhDeMFKXmmJnmz5/UD4H6RM0whtURM7fUjDzBds6y5kYzYHlgjMrT5M6AmcEh8sMxsoFJM9NkBAE/FaHRujhkoFxN/+TYgv1kFA6VC2mc/E+UUxsToUrMBaXQc968PitGA2YB0bOYlwUCaGM00Pw4LaTm+pvoEKQOiajEDX8XEbN8GAmJ01GzgvZgoDpKuIN8Jhs0G3oqJDb4NHBCjg6YI92gOzXQ/6pytYS03d6Bfw7Hd1/qbNPFhU0T7NkwYoVytf4mGcSx2OEQ7oMbwTMPTRU9DGXO1Xe0Q/93cpe1BHxe6lg9RD/nNq50JJ3HMeR84nx2WXGm6wqtxSWeFbyOddvMRFXfwIa3Roi+Pvxf0s5gZPC9SfBJqGzlKZ7Da1LxlSN0AsE2gaBfX/tiR/HHrFgYS0ucxg79NJOIbgkWODFjfDQE2G9JvAgwmUHRrKsEftvLb7Hew4mtDSR7A5fwQF2nW1tp9Sb1hKw8AXGAoOjkVzeUWVttUXraU/27b/ijROkOh47eBjYEipzwAWG8ovW+3dgcGKlzIAwAbtFRNHgzU6Gp0hyJUN3Tfc9zPiWWqx7UBQL1AyG2NgCEsVv36x5ZkahBZMP913MxIZxBUll8dbVajwuowqvHNk4E+hFS7onWSg3aqXpWP+tggbXFfit0t3qFWVapBJBMs422SQ7G7vSmjkGGSl1iSVOEUUphe/AMv8ctn/pO1zAAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxNy0wNC0wNFQxMDo0MDo0MiswODowMNlOhSIAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTctMDQtMDRUMTA6NDA6NDIrMDg6MDCoEz2eAAAAAElFTkSuQmCC'
+            icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAD6ElEQVRoQ+2YWwjlUxTGf59bE+WSmUK5TiOJmpRG5JqacXvwMFIjNEpyK/eRa2GmXEo0CQ8ILwgxYrzgAbklheHFNZoUISS3T5/2qeM05v/f/32maXTWy3n4r8v37bXX2msdsYWLtnD8zAhs7gzOMvC/yoDtecAKYAlwYCH3I/AJ8A7wHPCMpD+nRXxqV8j2GcBqYMcOcB8CyyW9MQ0SUyFg+wbgxjFAPwPvAh8A64EdgKXA3kXnL+Dm2EhyC5FmArZvAq4tIH4FVgKrJP0xDsx2Yh0P3AUcUL5dJylEBksTAdtHAa+U6Dnp4ySt2xga27sCLwMHATn9RZLeGsqglUCAHF2CL5G0tg8Q23sAIZp6WSspRT9IBhOwvRfweYm6RtIpNQhs59rl+kX2lfRZjf1It4XAhcDdxdFiSS/WALC9G/A1/DPOXCHp9hr7aRBIwMuA9PQ5k0XbB4ztL4A9gYcknd3HZlKnJQMPAAm6XtLuQ4LbTqtdCDwv6cQhPloI3AFcCvwuabshwccy8KikPITV0kJgvAYWSnqvJvpEDdwiafSW1LgZvg9MdKHVkkKot0x0obwFb/Y2HlMcnIH4sP0ScAzwG3CIpIwOnVJO/+PyDqyTNBr8Om2nVsSFwPhLnI5ypKT8/qfY3gZ4tkys0Vsq6Ylq5MWgKQOFxL3AucVf+vpFwNOSMrD9S2znpB8EDi0fHpZ05lDwsZsGgW2BJ4GTx4B8AzwOfAlkqMujlQHuBGDrohfi52+IaA2hZgKjYLYvL6PBnA4AIbRSUkbwZmkmYPsw4HpgMbBVBaJMsSFSNYJMrYjLWHw/cOqY04zHAZYOk+uTxSayPZAJdH/gWCCFPJJ0srMkRb9aBmXA9qLSSbIDR34B7gPulDSaUDcIprTQFPoFwE5F6QdgmaTszFVSTcD2fOBtYOcSKVlYIem7msi2k5VsZ+cUu9TGaZKeqvFTRcD2XCDb0z5lmzpd0mM1ASd1bV9d1tB8ConDaza03gRsp7u8mhe3gLhY0mgfaOGQFz1ZSCaD56usm5K+7+O0hkD+71lVnKZ7XNMnQF8d2+cB9xT91NIlfWx7EbCd+57izA77vqSD+ziv1bG9BjgpIzowv09n6ksgm9do5eu9vA8gkIPJWB5ct0m6sstHXwKZMjPHNE2OXWDy3fYL5VH8FpjX9cdXJwHb2VlHE+ZVkm7tA2Soju1lwCPF/ghJr23MVx8CC4D8n5l7uUBSusQmE9ups0+BXYAQeL2JQEnrfsBPkjJlbnIp781cSR91BevMQJeDzf19RmCWgcYTmF2hxgNsNp9loPkIGx3MMtB4gM3mW3wG/gaF9T5ASQU0lwAAAABJRU5ErkJggg=='
           },
           {
             label: '创建房间',
-            icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAM3SURBVGje7VlNSBRRHP8/tU1dd7PNwkwiUqFIb5pGlJZEardIsOwi5iU6SF+XDhVBRFFJdKlbH0hdgkBIO3kptSKiEgKJWAikQrKgxLD9dZB982b2zex7b2ZZof2f/sv+vuYx8z5mGBkVYtRGzdRI1RSmWfpAYzRKI2zeTE3POorTcKtZ9KAgk+YRXEP6OoH8zNgfUDBPVnPQ5kUY1LAHgEvIC86+HDMO+UkcQpEt4EG8dWAmEAnGvtIh/Bg1LsgqPLIhZ7DSv32pw357Gvw2GzqOQn/2DKO2ay9R4JRgSODc8xegS5C6CPXYVwXeHnP7kCBzXYtJuM2ZC8bPA1q5yGfdGQ4hzHN2vTvOO1s37/azBb0A7A91WGzTEfjCr8FgckUhZ78ysycu8NuIzzh/2h0V3HRpWLkAuQC5ALkASzkAI0oeNIpUdwIu9ct0BKZ4Z3LcCPEubhrAWsVWGAQo5d070wDPebfJIIC1d35tGuAl7zpIv1p598aATUSEMF/R/+rfhvjG2Qp7aTeR91xkgyZzjXU28MKlmwesvfBhzeztvBswvn4irBU25iENHsN3ztvoIwARJrlQtwaribPmfE5iaBfGIKrIyUOcc3r8+RMKhAB3FDl9AifsMwAROgS5Ywr4RgF/1Lc9Ech2Qj6VBt0kYOewLIAAtmcaAPo9kLttyNpA7ImIUG8TdlmabKdpoDMweyIi7BCkm1wwmwVMr5qu4o4IMWoRfrpNScuFPiG+xPJ37eW4DHtVuiBXOXD9qjOHu/l63IKzRjzwD1PQZ1Fmal6DB0itYa/FFWE8k3AGUKFrXodhqXmdAncXPkm4dxUXJRAaMCERGES1cnzCVryQaAxhizeRYSemJMSbbredp1otnki0xtEgXR+Rj7aUN8IAcAGr9c25ahXuSzQ/ogXMPmRHIKuTMNmOO0Osww2J9k/sTQIiGJcA+lDs35yHKMN5iUccFYQSfE35o0tn+6UcIorjqRnIMTw/sC9DH1wWQxSj1xnAqjk0226NTIUIoRPTsgD+Py6oh4glTRmSD2WCZXDoUwIwSix2S/kFxX8SwLoHsjYCY9kOcC7LAdhTupJF/zP/AOvS/D0NTmDBAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE3LTA0LTA0VDExOjQ3OjQ1KzA4OjAwI6N5UAAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxNy0wNC0wNFQxMTo0Nzo0NSswODowMFL+wewAAAAASUVORK5CYII='
+            icon: 'data:image/png;base64,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'
           },
           {
             label: '加入房间',
-            icon: 'data:image/png;base64,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'
+            icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADEAAAAwCAYAAAC4wJK5AAAC8ElEQVRoQ+2azYtOcRTHP18vC0YzYhqRiQ2l0UShpoQ0G1s2amRjYaNINhYWspJSSilZksg/QFlIeWmaIa8rDUIJeU3ejw73Tnee7tXvPs/cO9d0z+J56umc8zvnfJ/nPt9zfkdEYmZzgRNAH7Aw/jzg/StwXNK+AN0xKmZ2GNgFzAy0NWAIOA8clfTT7eQvZtYBPAAWBDpLU+uW9CzUPira61D9FL3rQL+kz3ESp4AdLTi8C6yW5KgEiZlNAZ7kRL3R9xlJ2+Ik3gPtkcYl4AjwIyga+ALclORQ5xIzc+SX5jKCjcCByOY70KbI0fOEo1xfi5wBtKxuZm3Ap4SjHk9iEfA48WGXpFctn1aQAzObDnxLuF9RJ1FQsf/ptkZiIqqedmaNRI3EOFag/jqZmVMUZ6qbAOc9RcoHYLukd42HZCHRDTxNKHdKepNivAW4UGTkDb53SjqZEsfUBl7XGxPAEWAxcFlSf8ajrQe4V1ISjsQGSbcyYrkW9T13gFVxEvO9l5DkDUemmNlyoLPgRJwND0v6mHVO1IssidnznyT+d6mTqAqCkwMJM/NpwyFgdlUqmyOOt8B+b4r8KTArh2HVVH95EleAdVWLLEc8NzyJOUBvDqOqqQ5Ojh921craTDw1Es1UrQibmAD6/8Re4KKkzRnM0cecZ6N+omgE/bG/UtKjjFh2AweBh5L6/OnUBbxMKHdIcio8RsxsADhdRCUzfO6RdCwlDm/IfALofYXLsuAJoJnNA+4Dfo9RtHgR10u6nZLENMAHybHkG2Oa2Qwf4Rfcnv6znzCz1pIouvwh/uskQqpUhk6NRBlVDjmjRiKkSmXo1EiUUeWQM7KQ8NtIv4uOh8RbJZ0LcTgROma2FriaOLs9ZrHDzhqbDKrM3Y7GEAclrYmTcD7kQ1rnJc1Krkv8cdjtcI7lqxhDo31BBJNvr/hwOa+Uvdvhiy0DknyF4++WTSxm5hzdNwz8ziK08Slzt8Or/wIYkTS6e/IbVlekip7er+wAAAAASUVORK5CYII='
           }
         ],
         buttonClicked(index, item) {
@@ -69,30 +89,59 @@
           })
           return true
         }
-      }
+      },
+      rooms: []
     }
 
     methods = {
-      handleViewTap: function() {}
+      getIn(e) {
+        wx.navigateTo({url: '/pages/Room?id=' + e.currentTarget.id})
+      },
+      async removeRoom(e) {
+        console.log(this.rooms[parseInt(e.currentTarget.id)])
+        if (this.rooms[parseInt(e.currentTarget.id)].founder.objectId === this.$parent.globalData.user.objectId) {
+          let res = await wepy.showModal({
+            title: '提示：',
+            content: '确认删除房间吗?',
+            confirmText: '确认',
+            cancelText: '手滑了'
+          })
+
+          if (res.confirm) {
+          }
+        } else {
+          let res = await wepy.showModal({
+            title: '提示：',
+            content: '确认退出房间吗?',
+            confirmText: '确认',
+            cancelText: '手滑了'
+          })
+
+          if (res.confirm) {
+          }
+        }
+      }
     }
 
     events = {
     }
 
-    onLoad() {
-      let self = this
-      this.$parent.getUserInfo(function (userInfo) {
-        if (userInfo) {
-          console.log(userInfo)
-          self.$parent.globalData.AV.User.loginWithWeapp().then(user => {
-            self.$parent.globalData.user = user.toJSON()
-            if (!user.avatarUrl) user.set('avatarUrl',userInfo.avatarUrl).save()
-          }
-          self.userInfo = userInfo
-          self.$apply()
-        }).catch(console.error)
-        }
-      })
+    async onLoad() {
+      this.userInfo = await this.$parent.getUserInfo()
+      if (!this.rooms.length) {
+        this.queryRooms()
+      }
+    }
+    queryRooms() {
+      var query = new this.$parent.globalData.AV.Query('RoomMember')
+      query.equalTo('member', this.$parent.globalData.user)
+      query.include(['room'])
+      query.find().then(results => {
+        console.log(results)
+        results.forEach((scm, i, a) => {
+          this.rooms = this.rooms.concat(scm.attributes.room)
+        })
+      }).then(_ => this.$apply())
     }
   }
 </script>

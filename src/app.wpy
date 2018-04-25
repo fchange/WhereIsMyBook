@@ -34,22 +34,44 @@ export default class extends wepy.app {
 
   globalData = {
     userInfo: null,
+    user: {},
     APP_ID: 'Xq590guTvJr5nnSg8BwD4mnS-gzGzoHsz',
     APP_KEY: 'JSj6886BVNuyRMBxm4bnYfas',
-    AV: null
+    AV: null,
+    defaultImg: 'http://lc-xq590gut.cn-n1.lcfile.com/42a40a2647ecad3ed67d.png'
   }
 
   constructor () {
     super()
     this.use('requestfix')
+    this.use('promisify')
   }
 
-  onLaunch() {
+  async onLaunch() {
+    let self = this
     this.globalData.AV = require('leancloud-storage')
     this.globalData.AV.init({
       appId: this.globalData.APP_ID,
       appKey: this.globalData.APP_KEY
     })
+
+    this.getUserInfo().then(userInfo => {
+      self.globalData.AV.User.loginWithWeapp().then(user => {
+        self.globalData.user = user
+        user.set('avatarUrl', userInfo.avatarUrl).set('nickName', userInfo.nickName).save()
+      }).catch(console.error).then(_ => {
+        console.log('getUserInfo OK')
+      })
+    })
+  }
+
+  async getUserInfo() {
+    if (this.globalData.userInfo) {
+    } else {
+      const res = await wepy.getUserInfo()
+      this.globalData.userInfo = res.userInfo
+    }
+    return this.globalData.userInfo
   }
 
   sleep (s) {
@@ -57,25 +79,6 @@ export default class extends wepy.app {
       setTimeout(() => {
         resolve('promise resolved')
       }, s * 1000)
-    })
-  }
-
-  async testAsync () {
-    const data = await this.sleep(3)
-    console.log(data)
-  }
-
-  getUserInfo(cb) {
-    const that = this
-    if (this.globalData.userInfo) {
-      return this.globalData.userInfo
-    }
-    wepy.getUserInfo({
-      success (res) {
-        that.globalData.userInfo = res.userInfo
-        console.log(res.signature)
-        cb && cb(res.userInfo)
-      }
     })
   }
 }

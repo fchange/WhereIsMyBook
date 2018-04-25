@@ -1,7 +1,74 @@
 <style lang="less">
+  .slide-image{
+    /* width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%; */
+    -ms-transform: translate(-50%, -50%);
+    /* -webkit-transform: translate(-50%, -50%); */
+    -moz-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+  }
+  .founder{
+    position:relative;
+    top:-25px;
+    left:70%;
+    image{
+      height:50px;
+      width:50px;
+      border-radius:50%;
+    }
+  }
+  .member{
+    image{
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+    }
+  }
 </style>
 <template>
+  <view class="page">
+    <view style="height: 160px;">
+      <swiper>
+        <block wx:for="{{room.images}}" wx:key="index" mode="aspectFill" >
+          <swiper-item>
+            <image src="{{item}}" class="slide-image" width="355" height="150"/>
+          </swiper-item>
+        </block>
+      </swiper>
+      <view class="founder">
+        <image src="{{room.founder.avatarUrl}}"/>
+      </view>
+    </view>
   
+    <view class="page__bd">
+      <view class="weui-cells__title">创始人</view>
+      <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell">
+          <view class="weui-cell__bd">{{room.founder.nickName}}</view>
+        </view>
+      </view>
+      <view class="weui-cells__title">成员</view>
+      <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell weui-flex">
+          <block wx:for="{{member}}" wx:key="index">
+            <view @tap="previewImage" id="{{index}}" class="member weui-flex__item">
+              <image class="" src="{{item.avatarUrl}}"/>
+            </view>
+          </block>
+        </view>
+      </view>
+    </view>
+    <view class="page__bd page__bd_spacing">
+      <button class="weui-btn weui-btn-area" type="primary" @tap="insert">加入房间</button>
+      <button class="weui-btn weui-btn-area" type="primary" @tap="share">邀请加入</button>
+    </view>
+  </view>
+
 </template>
 
 <script>
@@ -12,13 +79,46 @@
       navigationBarTitleText: '房间详情'
     }
     data = {
+      id: 0,
+      room: {},
+      member: []
     }
     methods = {
+      insert() {
+      }
     }
     events = {
     }
     onLoad(option) {
-      console.log(option)
+      console.log('开启datail页面')
+      if (!this.room.name) {
+        this.id = option.id
+        this.getdetail(this.id)
+      }
+    }
+    onPullDownRefresh() {
+      if (this.id !== 0) {
+        this.getdetail(this.id)
+      }
+    }
+    async getdetail(id) {
+      var roomObject = this.$parent.globalData.AV.Object.createWithoutData('Room', id)
+      const roomFetch = await roomObject.fetch({ include: ['founder'] })
+      this.room = roomFetch.attributes
+      this.$apply()
+      this.getmembers(roomFetch)
+    }
+
+    getmembers(roomFetch) {
+      var query = new this.$parent.globalData.AV.Query('RoomMember')
+      query.equalTo('room', roomFetch)
+      query.include(['member'])
+      query.find().then(rm => {
+        rm.forEach((scm, i, a) => {
+          console.log(scm.attributes.member.attributes)
+          this.member = this.member.concat(scm.attributes.member.attributes)
+        })
+      }).then(_ => this.$apply())
     }
   }
 </script>

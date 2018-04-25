@@ -1,7 +1,64 @@
 <style lang="less">
+  .page__bd{
+    display: block;
+    padding-top: 20px;
+    background-color: #f8f8f8
+  }
+  .title{
+    padding-left: 15px;
+    padding-bottom: 5px;
+  }
+  .btn{
+    margin: 15px
+  }
+  .cell{
+    padding:10px 15px;
+    display:flex;
+    align-items:center;
+  }
 </style>
 <template>
-  
+  <view class="page">
+    <view class="page__bd">
+      <view class="title">组织名</view>
+      <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell weui-cell_input">
+          <view class="weui-cell__bd">
+            <input class="weui-input" value="{{name}}" @input="typing('name')" placeholder="请输入组织名"/>
+          </view>
+          <view class="weui-cell__ft" wx:if="{{ nullName && name === '' }}">
+            <icon type="warn" size="23" color="#E64340"></icon>
+          </view>
+        </view>
+      </view>
+
+      <view class="cell">
+        <view class="weui-cell__bd">
+          <view class="weui-uploader">
+            <view class="weui-uploader__hd">
+              <view class="weui-uploader__title">组织头像</view>
+              <view class="weui-uploader__info">{{images.length}}/3</view>
+            </view>
+            <view class="weui-uploader__bd">
+              <view class="weui-uploader__files" id="uploaderFiles">
+                <block wx:for="{{images}}" wx:key="index">
+                  <view class="weui-uploader__file" @tap="previewImage" @longpress="longPress" id="{{index}}">
+                    <image class="weui-uploader__img" src="{{item}}" mode="aspectFill" />
+                  </view>
+                </block>
+              </view>
+              <view  wx:if="{{images.length <= 2}}" class="weui-uploader__input-box">
+                <view class="weui-uploader__input" @tap="chooseImage"></view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <button @tap="doCreate" class="weui-btn btn-primary btn" type="primary">创建组织</button>
+  </view>
+    </view>
+  </view>
 </template>
 
 <script>
@@ -12,12 +69,94 @@
       navigationBarTitleText: '创建房间'
     }
     data = {
+      name: '',
+      nullName: false,
+      images: [],
+      loading: false
     }
     methods = {
+      typing (type, e) {
+        this[type] = e.detail.value
+      },
+      async chooseImage (e) {
+        let self = this
+        let res = await wepy.chooseImage()
+        this.loading = true
+        this.$apply()
+        res.tempFilePaths.map(tempFilePath => () => new this.$parent.globalData.AV.File('filename', {
+          blob: {
+            uri: tempFilePath
+          }
+        }).save()).reduce(
+          (m, p) => m.then(v => self.$parent.globalData.AV.Promise.all([...v, p()])),
+          self.$parent.globalData.AV.Promise.resolve([])
+        ).then(files => {
+          files.map(file => {
+            console.log(file.url())
+            self.images = self.images.concat(file.url())
+          })
+        }).catch(console.error)
+        .then(_ => {
+          this.loading = false
+          self.$apply()
+        })
+      },
+      previewImage (e) {
+        wepy.previewImage({
+          current: e.currentTarget.id, // 当前显示图片的http链接
+          urls: this.data.images // 需要预览的图片http链接列表
+        })
+      },
+      async longPress (e) {
+        let res = await wepy.showModal({
+          title: '提示：',
+          content: '确认删除吗?',
+          confirmText: '确认',
+          cancelText: '手滑了'
+        })
+
+        if (res.confirm) {
+          this.data.images = this.data.images.splice(parseInt(e.currentTarget.id), 1)
+          this.$apply()
+        }
+      },
+      doCreate() {
+        if (this.name === '') {
+          this.nullName = true
+        } else {
+          this.loading = true
+          var room = new this.$parent.globalData.AV.Object('Room')
+          var roomMember = new this.$parent.globalData.AV.Object('RoomMember')
+          room.set('name', this.name)
+          room.set('images', this.images)
+          room.set('founder', this.$parent.globalData.user)
+          roomMember.set('room', room)
+          roomMember.set('member', this.$parent.globalData.user)
+          roomMember.save().then(rm => {
+            console.log('RoomId is ' + rm.attributes.room.id)
+            wx.showToast({
+              title: '创建成功',
+              icon: 'success',
+              duration: 2000
+            })
+            this.$parent.sleep(2).then(wx.navigateTo({url: '/pages/RoomDetail?id=' + rm.attributes.room.id}))
+          }).then(_ => {
+            this.loading = true
+          })
+        }
+        this.$apply()
+      }
+    }
+    watch = {
+      loading (newValue, oldValue) {
+        newValue && !oldValue && wx.showLoading({ title: '加载中' })
+        !newValue && oldValue && wx.hideLoading()
+      }
     }
     events = {
     }
     onLoad() {
+      this.images = [this.$parent.globalData.defaultImg]
     }
   }
 </script>

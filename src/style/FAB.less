@@ -11,7 +11,7 @@
     height: 50px;
     border-radius: 50%;
     z-index: 1500;
-    background-color: #E40A5D;
+    background-color: #cbded6;
     color: #fff;
     overflow: hidden;
     transition-duration: .3s;
@@ -39,7 +39,7 @@
 
 .wux-speed-dial__text {
     &:extend(.wux-speed-dial__icon);
-    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAAHdElNRQfhBAQLCR5MtjrbAAAAjUlEQVRo3u3ZMRKAIAxEUbDirp4nXnctFFDHBtDQ/O1Nnk6aHUMgZCBKMkmmNAtgOmL9M+IQQGVM95zljy8DAAAAAAAAAAAAAACALsDZcppSx7Q+WdtUvA5xffUtrjeA8/qQ21S9gc15/3Nfzw0M5O0G2kM5BQAAAAAAAAAAAAAAQGk33q0qZ/p/Q/JFdmei9usomnwIAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE3LTA0LTA0VDExOjA5OjMwKzA4OjAw1U4c3wAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxNy0wNC0wNFQxMTowOTozMCswODowMKQTpGMAAAAASUVORK5CYII=");
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAABa0lEQVRoQ+2avUpEMRBGzwf+NL6DFjaKVj6GyFoKYm+nxTb7BDaCYGUvYn33PexUBAvBZ7BxEUayZC3k7pK9MbKBSZ1JZr6chJkkovKmUv6b2TKwD6wAjaTPEnOVDOAeOIpOX0s6qy2AV2AzOv0iaau2AN6Ajej0u6R1D6BFgZJ7wFcgBTlfgWkqmZkj5AilKOAI5agE+CnkCDlCmQo4QpkC+im0EAiZWSi8b4EesNphVT+AO0mnE9tZyZyZ3QDHwFqHucLlQAOcSBqNETKzA2DYYbDfJjuSnuKYrdmomW0D4z6ZrSdp+NcB7Ep6/KcADiU1kwACQpdAUGepgzIj4EHSIBGhC2Av3hnNO90X8Az0fxCad4SU/l7QpKjk2egMlRwhRyhRgYVIJTJ9bTX3PZCoqqfTvgcSUZnWzRFyhByhTAUcoUwBS55CoXAPJWpoVT50XwHnMYAqvxqE+6Xw2SNcEtT32SMT7WTzb/uuFEBFXhWOAAAAAElFTkSuQmCC");
     background-repeat: no-repeat;
     background-size: contain;
     transition: transform 150ms cubic-bezier(0.4, 0, 1, 1);
@@ -67,7 +67,7 @@
     position: relative;
     z-index: 1;
     overflow: visible;
-    background-color: #E40A5D;
+    background-color: #cbded6;
     transition-duration: .3s;
     display: flex;
     align-items: center;
@@ -101,6 +101,7 @@
 .wux-speed-dial__button--hover {
     transition-duration: 0s;
     opacity: .8 !important;
+    transform:translate3d(0, 0, 0) scaleY(1);
 }
 
 .wux-speed-dial--opened {
